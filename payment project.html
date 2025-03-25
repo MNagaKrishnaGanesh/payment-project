@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Gateway</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .secure-icon {
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        #loader {
+            display: none;
+            margin-top: 10px;
+        }
+        .receipt {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .transaction-id {
+            font-size: 12px;
+            color: #555;
+            font-weight: bold;
+        }
+        .btn-download, .btn-reset {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-download:hover, .btn-reset:hover {
+            background-color: #0056b3;
+        }
+        .btn-reset {
+            background-color: #dc3545;
+        }
+        .btn-reset:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Make a Secure Payment</h2>
+        <p class="secure-icon">🔒 Secure & Encrypted</p>
+        <form id="paymentForm">
+            <div class="form-group">
+                <label for="name">Name on Card</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="card">Card Number</label>
+                <input type="text" id="card" maxlength="16" required>
+            </div>
+            <div class="form-group">
+                <label for="expiry">Expiry Date</label>
+                <input type="text" id="expiry" placeholder="MM/YY" required>
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" maxlength="3" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" required>
+            </div>
+            <button type="button" class="btn" onclick="processPayment()">Pay Now</button>
+        </form>
+        <div id="loader">Processing Payment... ⏳</div>
+        <div class="receipt" id="receipt">
+            <h3>Payment Receipt</h3>
+            <p><strong>Name:</strong> <span id="rName"></span></p>
+            <p><strong>Amount:</strong> ₹<span id="rAmount"></span></p>
+            <p><strong>Status:</strong> <span style="color: green; font-weight: bold;">Success ✅</span></p>
+            <p class="transaction-id">Transaction ID: <span id="transactionId"></span></p>
+            <button class="btn-download" onclick="downloadReceipt()">Download Receipt</button>
+            <button class="btn-reset" onclick="resetForm()">Make Another Payment</button>
+        </div>
+    </div>
+
+    <script>
+        function generateTransactionId() {
+            return 'TXN' + Math.floor(Math.random() * 1000000);
+        }
+
+        function processPayment() {
+            document.getElementById("loader").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("receipt").style.display = "block";
+                document.getElementById("rName").innerText = document.getElementById("name").value;
+                document.getElementById("rAmount").innerText = document.getElementById("amount").value;
+                const txnId = generateTransactionId();
+                document.getElementById("transactionId").innerText = txnId;
+                alert("Payment Successful! Thank you for your transaction.");
+            }, 3000);
+        }
+
+        function downloadReceipt() {
+            const name = document.getElementById("rName").innerText;
+            const amount = document.getElementById("rAmount").innerText;
+            const txnId = document.getElementById("transactionId").innerText;
+            
+            const receiptContent = `Payment Receipt\n\nName: ${name}\nAmount: ₹${amount}\nTransaction ID: ${txnId}\nStatus: Success ✅`;
+            
+            const blob = new Blob([receiptContent], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Payment_Receipt.txt";
+            link.click();
+        }
+
+        function resetForm() {
+            document.getElementById("paymentForm").reset();
+            document.getElementById("receipt").style.display = "none";
+        }
+    </script>
+</body>
+</html>
